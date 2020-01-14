@@ -4,12 +4,13 @@ call plug#begin('~/.vim/plugged')
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " Show git additions/deletions in the gutter
 Plug 'airblade/vim-gitgutter'
+" Lang support
+Plug 'sheerun/vim-polyglot'
 " Fuzzy finder for file/buffer/window switching and search
 Plug '~/.fzf'
 Plug 'junegunn/fzf.vim'
 " A sexier status bar and colourscheme to match
 Plug 'itchyny/lightline.vim'
-Plug 'shinchu/lightline-gruvbox.vim'
 " Switch vim panes with the same commands as tmux
 Plug 'christoomey/vim-tmux-navigator'
 " LaTeX highlighting, autocomplete, snippets and compilation
@@ -32,10 +33,12 @@ Plug 'godlygeek/tabular'
 Plug 'plasticboy/vim-markdown'
 
 " Colourscheme
-Plug 'morhetz/gruvbox'
+Plug 'joshdick/onedark.vim'
 
 " Initialize plugin system
 call plug#end()
+
+filetype plugin on
 
 " Spell check
 set spelllang=en_gb
@@ -76,14 +79,30 @@ set mouse=a
 "use system clipboard
 set clipboard+=unnamedplus
 
-colorscheme gruvbox
-highlight CursorLineNr ctermbg=none
-highlight SignColumn ctermbg=none
+let g:onedark_terminal_italics = 1
+let g:onedark_hide_endofbuffer = 1
+colorscheme onedark
+
+"Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
+"If you're using tmux version 2.2 or later, you can remove the outermost $TMUX check and use tmux's 24-bit color support
+"(see < http://sunaku.github.io/tmux-24bit-color.html#usage > for more information.)
+if (empty($TMUX))
+  if (has("nvim"))
+    "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
+    let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+  endif
+  "For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
+  "Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
+  " < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
+  if (has("termguicolors"))
+    set termguicolors
+  endif
+endif
 
 " lightline
 set noshowmode
 let g:lightline = {}
-let g:lightline.colorscheme = 'gruvbox'
+let g:lightline.colorscheme = 'onedark'
 
 " panes
 nnoremap <C-j> <C-w>j
@@ -252,3 +271,25 @@ let g:vim_markdown_conceal = 0
 let g:vim_markdown_frontmatter = 1  " for YAML format
 let g:vim_markdown_toml_frontmatter = 1  " for TOML format
 let g:vim_markdown_json_frontmatter = 1  " for JSON format
+
+" Goyo
+function! s:goyo_enter()
+  let b:quitting = 0
+  let b:quitting_bang = 0
+  autocmd QuitPre <buffer> let b:quitting = 1
+  cabbrev <buffer> q! let b:quitting_bang = 1 <bar> q!
+endfunction
+
+function! s:goyo_leave()
+  " Quit Vim if this is the only remaining buffer
+  if b:quitting && len(filter(range(1, bufnr('$')), 'buflisted(v:val)')) == 1
+    if b:quitting_bang
+      qa!
+    else
+      qa
+    endif
+  endif
+endfunction
+
+autocmd! User GoyoEnter call <SID>goyo_enter()
+autocmd! User GoyoLeave call <SID>goyo_leave()

@@ -12,6 +12,7 @@ alias vim="nvim"
 alias cvmstart="virsh start cvm && virsh suspend cvm"
 alias cvmstop="virsh resume cvm; virsh shutdown cvm"
 alias sshtw="ssh jxr814@tinky-winky.cs.bham.ac.uk"
+alias sn="clear && sncli && clear"
 
 function open() {
     if [ ! -n "$1" ]; then

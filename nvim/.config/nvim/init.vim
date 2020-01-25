@@ -31,6 +31,8 @@ Plug 'neovimhaskell/haskell-vim'
 Plug 'godlygeek/tabular'
 " Better syntax highlighting for markdown
 Plug 'plasticboy/vim-markdown'
+Plug 'vim-pandoc/vim-pandoc'
+Plug 'vim-pandoc/vim-pandoc-syntax'
 
 " Colourscheme
 Plug 'joshdick/onedark.vim'
@@ -253,7 +255,7 @@ nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
 let g:tex_flavor='latex'
 let g:vimtex_view_method='zathura'
 let g:vimtex_quickfix_mode=0
-set conceallevel=1
+set conceallevel=2
 let g:tex_conceal='abdmg'
 let g:vimtex_view_general_viewer = 'evince'
 

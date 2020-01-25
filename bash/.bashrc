@@ -12,8 +12,5 @@ export EDITOR=nvim
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
-# Firefox fix
-MOZ_ENABLE_WAYLAND=1; export MOZ_ENABLE_WAYLAND
-
 # GHC
 [ -f "${GHCUP_INSTALL_BASE_PREFIX:=$HOME}/.ghcup/env" ] && source "${GHCUP_INSTALL_BASE_PREFIX:=$HOME}/.ghcup/env"

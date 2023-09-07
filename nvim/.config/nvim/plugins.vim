@@ -7,6 +7,7 @@ Plug 'sheerun/vim-polyglot' " Better syntax highlighting
 Plug '~/.fzf' " Use the path where fzf is installed
 Plug 'junegunn/fzf.vim' " Fuzzy finder for file/buffer/window switching and search
 Plug 'itchyny/lightline.vim' " A sexier status bar and colourscheme to match
+Plug 'tpope/vim-fugitive'
 Plug 'christoomey/vim-tmux-navigator' " Switch vim panes with the same commands as tmux
 Plug 'honza/vim-snippets' " Snippet library!
 Plug 'tpope/vim-commentary' " Comment lines like a god

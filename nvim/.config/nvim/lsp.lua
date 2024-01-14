@@ -9,12 +9,24 @@ require("lspconfig")["lua_ls"].setup({
 require("lspconfig")["pyright"].setup({
 	capabilities = capabilities,
 })
+
+-- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#tsserver
 require("lspconfig")["tsserver"].setup({
 	capabilities = capabilities,
 })
+
+-- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#angularls
 require("lspconfig")["angularls"].setup({
 	capabilities = capabilities,
 })
+
+-- npm i -g vscode-langservers-extracted
+require"lspconfig".html.setup {
+  capabilities = capabilities,
+}
+require"lspconfig".cssls.setup {
+  capabilities = capabilities,
+}
 
 
 --------------------------------

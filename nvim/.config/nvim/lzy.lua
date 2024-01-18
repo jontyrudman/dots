@@ -31,6 +31,11 @@ require("lazy").setup({
 	},
 	{ "hrsh7th/cmp-vsnip" },
 	{ "hrsh7th/vim-vsnip" },
+	{
+		"windwp/nvim-autopairs",
+		event = "InsertEnter",
+    opts = {}, -- this is equalent to setup({}) function
+	},
 	{ "airblade/vim-gitgutter" },
 	{ "tpope/vim-commentary" },
 	{ "tpope/vim-fugitive" },

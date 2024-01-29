@@ -1,0 +1,9 @@
+#
+# Source this in a .bashrc after moving it and .bash_prompt to $HOME.
+#
+
+source $HOME/.bash_prompt
+export PATH="$HOME/.node_modules/bin:/home/jonty/.local/bin:$PATH"
+export EDITOR=nvim
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash

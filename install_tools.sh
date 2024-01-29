@@ -46,8 +46,10 @@ install_nvim
 echo "# Install node version manager and latest version of node"
 install_node
 
-echo "# Install tmux"
+echo "# Install tmux, fzf, ag"
 sudo apt -y install tmux || sudo dnf -y install tmux
+sudo apt -y install fzf || sudo dnf -y install fzf
+sudo apt -y install silversearcher-ag || sudo dnf -y install the_silver_searcher
 
 echo "# Install language servers"
 

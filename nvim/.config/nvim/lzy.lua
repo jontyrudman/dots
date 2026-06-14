@@ -46,13 +46,39 @@ require("lazy").setup({
 	{
 		"itchyny/lightline.vim",
 		config = function()
+			-- Show repo-relative path in status line within git repos
+			function _G.LightlineRelativePath()
+				local ok, result = pcall(vim.fn.system, "git rev-parse --show-prefix 2>/dev/null")
+				local filename = vim.fn.expand("%:t")
+				if not ok or vim.v.shell_error ~= 0 or filename == "" then
+					return filename
+				end
+				local relative = result:gsub("\n$", "")
+				if relative == "" then
+					return filename
+				end
+				return relative .. filename
+			end
+
 			vim.g.lightline = {
 				colorscheme = "onedark",
+				active = {
+					left = {
+						{ "mode", "paste" },
+						{ "git_relative_path", "modified" },
+					},
+				},
+				component_function = {
+					git_relative_path = "v:lua.LightlineRelativePath",
+				},
 			}
 		end,
 	},
   {"nvim-treesitter/nvim-treesitter", build = ":TSUpdate"}
 })
+
+vim.keymap.set("n", "<C-p>", ":Files<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<C-h>", ":Ag<CR>", { noremap = true, silent = true })
 
 require("nvim-tree").setup({
 	renderer = {

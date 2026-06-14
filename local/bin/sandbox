@@ -1,0 +1,12 @@
+HERE="$(realpath .)"
+echo "Entering sandbox for $HERE"
+bwrap \
+--ro-bind / / \
+--proc /proc \
+--bind ~/.pi ~/.pi \
+--dev-bind /dev/null /dev/null \
+--dev-bind /dev/urandom /dev/urandom \
+--tmpfs /tmp \
+--bind "$HERE" "$HERE" \
+--setenv PS1 "sandbox$ " \
+sh "$@"

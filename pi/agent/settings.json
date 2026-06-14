@@ -1,0 +1,9 @@
+{
+  "lastChangelogVersion": "0.79.3",
+  "defaultProvider": "openrouter",
+  "defaultModel": "deepseek/deepseek-v4-flash",
+  "defaultThinkingLevel": "high",
+  "packages": [
+    "npm:pi-rewind"
+  ]
+}

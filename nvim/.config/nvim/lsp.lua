@@ -1,32 +1,49 @@
 ------------------------------------
 -- LSPCONFIG PLUGIN CONFIGURATION --
+-- Using vim.lsp.config API (Nvim 0.11+)
 ------------------------------------
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-require("lspconfig")["lua_ls"].setup({
+-- See :help lspconfig-nvim-0.11
+vim.lsp.config('lua_ls', {
 	capabilities = capabilities,
 })
-require("lspconfig")["pyright"].setup({
-	capabilities = capabilities,
-})
+vim.lsp.enable('lua_ls')
 
--- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#tsserver
-require("lspconfig")["tsserver"].setup({
+vim.lsp.config('pyright', {
 	capabilities = capabilities,
 })
+vim.lsp.enable('pyright')
+
+-- tsserver was renamed to ts_ls, but vtsls is faster
+-- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#ts_ls
+vim.lsp.config('vtsls', {
+	capabilities = capabilities,
+})
+vim.lsp.enable('vtsls')
 
 -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#angularls
-require("lspconfig")["angularls"].setup({
-	capabilities = capabilities,
-})
+-- vim.lsp.config('angularls', {
+-- 	capabilities = capabilities,
+-- })
+-- vim.lsp.enable('angularls')
 
 -- npm i -g vscode-langservers-extracted
-require"lspconfig".html.setup {
-  capabilities = capabilities,
-}
-require"lspconfig".cssls.setup {
-  capabilities = capabilities,
-}
+vim.lsp.config('html', {
+	capabilities = capabilities,
+})
+vim.lsp.enable('html')
+
+vim.lsp.config('cssls', {
+	capabilities = capabilities,
+})
+vim.lsp.enable('cssls')
+
+-- go install gopls
+vim.lsp.config('gopls', {
+	capabilities = capabilities,
+})
+vim.lsp.enable('gopls')
 
 
 --------------------------------

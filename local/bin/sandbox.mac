@@ -1,0 +1,103 @@
+#!/bin/bash
+#
+# sandbox - enter a sandboxed shell using sandbox-exec
+#
+# SYNOPSIS
+#   sandbox [shell-arguments...]
+#
+# DESCRIPTION
+#   Launches an interactive shell within a macOS sandbox-exec profile
+#   that provides:
+#     - Read-only access to ~/.local/bin, ~/.local/share, and /opt/homebrew
+#     - Read-write access to ~/.pi (pi configuration and data)
+#     - Read-write access to the directory from which it is run
+#     - Read-write access to /tmp and /var/tmp for temporary files
+#     - Full networking
+#     - All standard system libraries and binaries
+#
+# EXAMPLES
+#   sandbox               # Start interactive sandboxed shell
+#   sandbox -c 'make'     # Run a single command in the sandbox
+
+set -e
+
+usage() {
+    sed -n '/^# SYNOPSIS/,/^# EXAMPLES/p' "$0" \
+        | sed 's/^#[[:space:]]*//; /^$/d' \
+        | grep -v -E '^(SYNOPSIS|EXAMPLES)$'
+    exit 0
+}
+
+# If called with the shell argument being a help flag, show usage.
+# We check before the sandbox so the user can see help even without sandbox-exec.
+for arg in "$@"; do
+    case "$arg" in
+        -h|--help) usage ;;
+    esac
+done
+
+# Check that sandbox-exec is available
+if ! command -v sandbox-exec >/dev/null 2>&1; then
+    echo "sandbox: sandbox-exec not found (this tool is macOS-only)" >&2
+    exit 1
+fi
+
+# Escape double-quote characters in a path for the SBPL profile string
+escape() {
+    printf '%s' "$1" | sed 's/"/\\"/g'
+}
+
+CURDIR="$(escape "$PWD")"
+HOME_DIR="$(escape "$HOME")"
+
+# ---------------------------------------------------------------------------
+# Build the sandbox profile
+# ---------------------------------------------------------------------------
+# The profile is constructed dynamically so that the current directory and
+# home directory are baked in at runtime.
+# ---------------------------------------------------------------------------
+
+PROFILE="(version 1)
+(deny default)
+
+; === Base system access ===
+; - file-read*: read system binaries, libraries, fonts, etc.
+; - file-map-executable: required for dyld to map executables/libraries
+; - process-exec: run executables
+; - process-fork: subshells, pipes, background jobs
+; - sysctl-read: read kernel information (hw.model, etc.)
+(allow file-read* file-map-executable process-exec process-fork sysctl-read)
+
+; === Device access ===
+(allow file-write* file-ioctl (subpath \"/dev\"))
+
+; === Networking (IPv4, IPv6, Unix domain sockets, DNS) ===
+(allow network*)
+
+; === Read-only access to ~/.local/bin and ~/.local/share ===
+(allow file-read* (subpath \"${HOME_DIR}/.local/bin\"))
+(allow file-read* (subpath \"${HOME_DIR}/.local/share\"))
+
+; === Read-only access to /opt/homebrew (Homebrew) ===
+(allow file-read* file-map-executable (subpath \"/opt/homebrew\"))
+
+; === Read-write access to ~/.pi (pi configuration and data) ===
+(allow file-read* file-write* (subpath \"${HOME_DIR}/.pi\"))
+
+; === Read-write access to the current directory ===
+(allow file-read* file-write* (subpath \"${CURDIR}\"))
+
+; === Explicitly deny writes to the read-only locations ===
+; These specific deny rules take precedence over the broader allow for CURDIR,
+; ensuring that .local/bin and .local/share remain read-only even when CURDIR
+; is the parent directory (e.g., when running from \$HOME).
+(deny file-write* (subpath \"${HOME_DIR}/.local/bin\"))
+(deny file-write* (subpath \"${HOME_DIR}/.local/share\"))
+
+; === Temp directories (needed by many tools: compilers, editors, etc.) ===
+(allow file-write* (subpath \"/private/tmp\"))
+(allow file-write* (subpath \"/private/var/tmp\"))
+"
+
+# Launch the sandboxed shell, forwarding any arguments
+exec sandbox-exec -p "$PROFILE" "${SHELL:-/bin/bash}" "$@"

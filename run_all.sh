@@ -33,3 +33,17 @@ mkdir -p "$HOME/.local/bin"
 cp local/bin/sandbox "$HOME/.local/bin/sandbox"
 chmod +x "$HOME/.local/bin/sandbox"
 echo "Done."
+
+# Bin scripts
+echo -n "Copying bin scripts to ${HOME}/.local/bin... "
+cp local/bin/coding "$HOME/.local/bin/coding"
+cp local/bin/agent "$HOME/.local/bin/agent"
+chmod +x "$HOME/.local/bin/coding" "$HOME/.local/bin/agent"
+echo "Done."
+
+# Zellij config
+echo -n "Copying zellij config to ${HOME}/.config/zellij... "
+mkdir -p "$HOME/.config/zellij/layouts"
+cp config/zellij/config.kdl "$HOME/.config/zellij/config.kdl"
+cp config/zellij/layouts/coding.kdl "$HOME/.config/zellij/layouts/coding.kdl"
+echo "Done."

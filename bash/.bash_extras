@@ -7,10 +7,10 @@ export PATH="$HOME/.node_modules/bin:$HOME/.local/bin:$PATH"
 export EDITOR=nvim
 export PATH=$HOME/go/bin:$PATH:/usr/local/go/bin
 
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+eval "$(~/.local/bin/mise activate bash)"
 export FZF_DEFAULT_OPTS="--history=$HOME/.fzf_history"
 
-eval "$(~/.local/bin/mise activate bash)"
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" --no-use  # This loads nvm

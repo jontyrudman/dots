@@ -48,16 +48,27 @@ require("lazy").setup({
 		config = function()
 			-- Show repo-relative path in status line within git repos
 			function _G.LightlineRelativePath()
-				local ok, result = pcall(vim.fn.system, "git rev-parse --show-prefix 2>/dev/null")
 				local filename = vim.fn.expand("%:t")
-				if not ok or vim.v.shell_error ~= 0 or filename == "" then
+				if filename == "" then
+					return ""
+				end
+
+				local full_path = vim.fn.expand("%:p")
+				-- Return cached result if the file path hasn't changed
+				if vim.b.lightline_rel_cache and vim.b.lightline_rel_cache.path == full_path then
+					return vim.b.lightline_rel_cache.result
+				end
+
+				-- Only run git when the file actually changed
+				local ok, result = pcall(vim.fn.system, "git rev-parse --show-prefix 2>/dev/null")
+				if not ok or vim.v.shell_error ~= 0 then
+					vim.b.lightline_rel_cache = { path = full_path, result = filename }
 					return filename
 				end
 				local relative = result:gsub("\n$", "")
-				if relative == "" then
-					return filename
-				end
-				return relative .. filename
+				local final = (relative == "") and filename or (relative .. filename)
+				vim.b.lightline_rel_cache = { path = full_path, result = final }
+				return final
 			end
 
 			vim.g.lightline = {
